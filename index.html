@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Notes Wall</title>
+    <meta
+      name="description"
+      content="An anonymous public wall for small notes that are reviewed before they appear."
+    >
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="landing" aria-labelledby="site-title">
+        <div class="intro-copy">
+          <p class="kicker">Anonymous, moderated, tiny</p>
+          <h1 id="site-title">Notes Wall</h1>
+          <p class="lede">
+            Leave a small public note for someone you may never meet. Every note
+            waits quietly for approval before it can be found by strangers.
+          </p>
+        </div>
+
+        <div class="illustration" aria-hidden="true">
+          <div class="paper paper-one">dear void,</div>
+          <div class="paper paper-two">still here</div>
+          <div class="paper paper-three">take care</div>
+          <span class="pin pin-one"></span>
+          <span class="pin pin-two"></span>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Submit and discover notes">
+        <form class="note-form" id="note-form" novalidate>
+          <div class="form-heading">
+            <label for="note-input">Write a note</label>
+            <span id="char-counter" class="counter">0/500</span>
+          </div>
+          <textarea
+            id="note-input"
+            name="note"
+            maxlength="500"
+            rows="8"
+            placeholder="Something small, true, strange, or kind..."
+            aria-describedby="form-status validation-hint"
+          ></textarea>
+          <p id="validation-hint" class="hint">
+            No links, emails, phone numbers, or names you would regret posting.
+          </p>
+          <div class="actions">
+            <button id="submit-button" type="submit">Submit note</button>
+            <button id="random-button" type="button" class="secondary">
+              Show random note
+            </button>
+          </div>
+          <p id="form-status" class="status" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="random-panel" aria-labelledby="random-title">
+          <div class="panel-header">
+            <p class="kicker">Approved from the wall</p>
+            <h2 id="random-title">A note appears here</h2>
+          </div>
+          <blockquote id="random-note" class="random-note">
+            Press the random button and the wall will choose something that made
+            it through moderation.
+          </blockquote>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>
