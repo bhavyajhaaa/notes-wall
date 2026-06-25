@@ -1,15 +1,15 @@
-# Notes Wall
+# Things That Keep Me Sane
 
-A static GitHub Pages MVP for an anonymous public notes wall. Visitors can submit short text notes, and a random button can show one approved note from Supabase.
+A static personal checklist, anonymous postcard notes wall, and a few illustrated roads to small creative tools.
 
 ## Setup
 
 1. Create a Supabase project.
 2. Open the SQL editor and run the SQL below.
-3. In `app.js`, replace:
+3. In `app.js`, set:
    - `PASTE_YOUR_SUPABASE_URL_HERE`
    - `PASTE_YOUR_SUPABASE_ANON_KEY_HERE`
-4. Keep the anon key public. Do not add service role keys or private API keys to this repo.
+4. Keep the anon or publishable key public. Do not add service role keys or private API keys to this repo.
 5. Open `index.html` locally, or publish the repo with GitHub Pages.
 
 ## Supabase SQL
@@ -47,7 +47,7 @@ using (
 );
 ```
 
-Approve notes manually in Supabase by setting `approved` to `true` for rows that should appear on the public wall.
+Approve notes manually in Supabase by setting `approved` to `true` for rows that should appear on the public wall. Submitted rows are inserted as `type = 'text'`, `content = submitted note`, and `approved = false`.
 
 ## Supabase Config
 
@@ -70,10 +70,18 @@ Find these in Supabase under **Project Settings -> API**.
 
 The app has no framework, no npm dependency, and no build step. It uses the Supabase browser client from a CDN, so it works directly from GitHub Pages.
 
+## Current Features
+
+- A minimalist checklist inspired by a Tumblr post credit line on the page.
+- Anonymous postcard-style text note submission with a 500 character limit.
+- Save is disabled while the postcard is empty.
+- Random reading from approved text submissions only.
+- Illustrated road links to JSPaint, WigglyPaint, Twotone, and Kaggle datasets.
+
 ## Limitations
 
 - Client-side validation helps the user, but it is not moderation or security. Review notes before approving them.
 - The public anon key is visible in the browser by design. Row Level Security policies must stay enabled.
-- Link, email, and phone detection is basic and may miss unusual formats.
+- There is intentionally no email, phone, name, or link validation in this version.
 - Random note selection counts approved rows first, then fetches one offset. This is fine for an MVP but not ideal for very large tables.
 - There is no admin UI in this MVP. Use Supabase to approve or delete submissions.

@@ -2,38 +2,65 @@ const SUPABASE_URL = "https://hgwipzfxagbarwoafzvc.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_xUzED1z7bV6xWL8IIaKOIQ_WpAxocEX";
 
 const MAX_CHARS = 500;
-const LINK_PATTERN = /(https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,})(\/\S*)?/i;
-const EMAIL_PATTERN = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
-const PHONE_PATTERN = /(?:\+?\d[\s().-]*){7,}/;
 
-const form = document.querySelector("#note-form");
 const noteInput = document.querySelector("#note-input");
 const charCounter = document.querySelector("#char-counter");
-const submitButton = document.querySelector("#submit-button");
-const randomButton = document.querySelector("#random-button");
-const formStatus = document.querySelector("#form-status");
-const randomNote = document.querySelector("#random-note");
+const saveButton = document.querySelector("#save-button");
+const viewNoteButton = document.querySelector("#view-note-button");
+const writeNoteButton = document.querySelector("#write-note-button");
+const writeMode = document.querySelector("#write-mode");
+const readMode = document.querySelector("#read-mode");
+const olderNote = document.querySelector("#older-note");
+const checklistInputs = document.querySelectorAll(".checklist input");
+const careMessage = document.querySelector("#care-message");
+const postcardStamp = document.querySelector(".postcard-stamp");
+
+const STAMPS = [
+  [
+    ["  /\\  ", "stamp-moss"],
+    [" /**\\ ", "stamp-moss"],
+    ["  ||  ", "stamp-ink"],
+  ],
+  [
+    [" .--. ", "stamp-sun"],
+    ["(    )", "stamp-sun"],
+    [" '--' ", "stamp-violet"],
+  ],
+  [
+    ["  /\\  ", "stamp-berry"],
+    [" /__\\ ", "stamp-berry"],
+    [" |  | ", "stamp-sky"],
+  ],
+  [
+    [" \\o/  ", "stamp-sky"],
+    ["  |-- ", "stamp-violet"],
+    [" / \\  ", "stamp-sky"],
+  ],
+  [
+    ["  @   ", "stamp-berry"],
+    ["-<|>- ", "stamp-moss"],
+    ["  |   ", "stamp-moss"],
+  ],
+  [
+    ["  *   ", "stamp-sun"],
+    [" ***  ", "stamp-violet"],
+    ["  *   ", "stamp-sky"],
+  ],
+  [
+    [" ><(((>", "stamp-sky"],
+    ["   ~~~ ", "stamp-moss"],
+    [" ~~~   ", "stamp-violet"],
+  ],
+  [
+    [" .--. ", "stamp-sky"],
+    ["(____)", "stamp-sky"],
+    ["      ", "stamp-ink"],
+  ],
+];
 
 let supabaseClient = null;
 
-function hasSupabaseConfig() {
-  return (
-    SUPABASE_URL.startsWith("https://") &&
-    SUPABASE_ANON_KEY.length > 40 &&
-    !SUPABASE_URL.includes("PASTE_") &&
-    !SUPABASE_ANON_KEY.includes("PASTE_")
-  );
-}
-
 function getSupabase() {
-  if (!hasSupabaseConfig()) {
-    throw new Error("Add your Supabase URL and anon key in app.js first.");
-  }
-
-  if (!window.supabase) {
-    throw new Error("Supabase client failed to load. Check your connection and CDN access.");
-  }
-
   if (!supabaseClient) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
@@ -41,109 +68,89 @@ function getSupabase() {
   return supabaseClient;
 }
 
-function setStatus(message, kind = "") {
-  formStatus.textContent = message;
-  formStatus.className = kind ? `status ${kind}` : "status";
+function updateNoteControls() {
+  const text = noteInput.value.trim();
+  charCounter.textContent = `${noteInput.value.length}/${MAX_CHARS}`;
+  saveButton.disabled = text.length === 0;
 }
 
-function setRandomNote(message, isEmpty = false) {
-  randomNote.textContent = message;
-  randomNote.classList.toggle("is-empty", isEmpty);
-}
+function updateCareMessage() {
+  const checkedCount = [...checklistInputs].filter((input) => input.checked).length;
 
-function updateCounter() {
-  const count = noteInput.value.length;
-  charCounter.textContent = `${count}/${MAX_CHARS}`;
-  charCounter.style.color = count > MAX_CHARS ? "var(--error)" : "";
-}
-
-function validateNote(rawText) {
-  const text = rawText.trim();
-
-  if (!text) {
-    return "Please write a note before submitting.";
-  }
-
-  if (text.length > MAX_CHARS) {
-    return "Please keep your note to 500 characters or fewer.";
-  }
-
-  if (LINK_PATTERN.test(text)) {
-    return "Links are not allowed on the wall.";
-  }
-
-  if (EMAIL_PATTERN.test(text)) {
-    return "Email addresses are not allowed on the wall.";
-  }
-
-  if (PHONE_PATTERN.test(text)) {
-    return "Phone numbers are not allowed on the wall.";
-  }
-
-  return "";
-}
-
-async function submitNote(event) {
-  event.preventDefault();
-
-  const content = noteInput.value.trim();
-  const validationError = validateNote(content);
-
-  if (validationError) {
-    setStatus(validationError, "error");
+  if (checkedCount === 0) {
+    careMessage.hidden = true;
+    careMessage.textContent = "";
     return;
   }
 
-  submitButton.disabled = true;
-  setStatus("Sending your note to the moderation queue...");
+  const really = Array(checkedCount).fill("really").join(", ");
+  careMessage.textContent = `you ${really} need to take care of yourself right now`;
+  careMessage.hidden = false;
+}
+
+function renderStamp() {
+  const stamp = STAMPS[Math.floor(Math.random() * STAMPS.length)];
+
+  postcardStamp.replaceChildren(
+    ...stamp.map(([text, className]) => {
+      const line = document.createElement("span");
+      line.className = `stamp-line ${className}`;
+      line.textContent = text;
+      return line;
+    })
+  );
+}
+
+function showWriteMode() {
+  readMode.classList.add("hidden");
+  writeMode.classList.remove("hidden");
+  noteInput.focus();
+}
+
+function showReadMode(message) {
+  olderNote.textContent = message;
+  writeMode.classList.add("hidden");
+  readMode.classList.remove("hidden");
+}
+
+async function saveNote() {
+  const content = noteInput.value.trim();
+
+  if (!content) {
+    return;
+  }
+
+  saveButton.disabled = true;
 
   try {
-    const client = getSupabase();
-    const { error } = await client.from("submissions").insert({
+    await getSupabase().from("submissions").insert({
       type: "text",
       content,
       approved: false,
     });
 
-    if (error) {
-      throw error;
-    }
-
     noteInput.value = "";
-    updateCounter();
-    setStatus("Submitted. It will appear after approval.", "success");
-  } catch (error) {
-    setStatus(error.message || "Something went wrong while submitting.", "error");
-  } finally {
-    submitButton.disabled = false;
+    updateNoteControls();
+  } catch {
+    saveButton.disabled = false;
   }
 }
 
-async function showRandomNote() {
-  randomButton.disabled = true;
-  setStatus("Looking for an approved note...");
-  setRandomNote("The wall is shuffling its papers.", true);
-
+async function viewOlderNote() {
   try {
-    const client = getSupabase();
-    const { count, error: countError } = await client
+    const { count } = await getSupabase()
       .from("submissions")
       .select("id", { count: "exact", head: true })
       .eq("approved", true)
       .eq("type", "text");
 
-    if (countError) {
-      throw countError;
-    }
-
     if (!count) {
-      setStatus("No approved notes yet.", "success");
-      setRandomNote("Nothing has been approved yet. The wall is still waiting.", true);
+      showReadMode("No approved notes yet.");
       return;
     }
 
     const offset = Math.floor(Math.random() * count);
-    const { data, error } = await client
+    const { data } = await getSupabase()
       .from("submissions")
       .select("content")
       .eq("approved", true)
@@ -151,27 +158,18 @@ async function showRandomNote() {
       .range(offset, offset)
       .limit(1);
 
-    if (error) {
-      throw error;
-    }
-
-    if (!data || data.length === 0) {
-      setStatus("No approved notes could be found.", "success");
-      setRandomNote("Nothing has been approved yet. The wall is still waiting.", true);
-      return;
-    }
-
-    setStatus("Found one.", "success");
-    setRandomNote(data[0].content);
-  } catch (error) {
-    setStatus(error.message || "Something went wrong while fetching a note.", "error");
-    setRandomNote("The wall could not answer right now. Try again in a minute.", true);
-  } finally {
-    randomButton.disabled = false;
+    showReadMode(data?.[0]?.content || "No approved notes yet.");
+  } catch {
+    showReadMode("No approved notes yet.");
   }
 }
 
-noteInput.addEventListener("input", updateCounter);
-form.addEventListener("submit", submitNote);
-randomButton.addEventListener("click", showRandomNote);
-updateCounter();
+noteInput.addEventListener("input", updateNoteControls);
+saveButton.addEventListener("click", saveNote);
+viewNoteButton.addEventListener("click", viewOlderNote);
+writeNoteButton.addEventListener("click", showWriteMode);
+checklistInputs.forEach((input) => input.addEventListener("change", updateCareMessage));
+
+updateNoteControls();
+updateCareMessage();
+renderStamp();

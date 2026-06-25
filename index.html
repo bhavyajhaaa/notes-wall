@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Notes Wall</title>
+    <title>things that keep me sane</title>
     <meta
       name="description"
-      content="An anonymous public wall for small notes that are reviewed before they appear."
+      content="A minimalist personal checklist, anonymous postcard notes wall, and small roads to creative tools."
     >
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
@@ -14,61 +14,105 @@
   </head>
   <body>
     <main class="page-shell">
-      <section class="landing" aria-labelledby="site-title">
-        <div class="intro-copy">
-          <p class="kicker">Anonymous, moderated, tiny</p>
-          <h1 id="site-title">Notes Wall</h1>
-          <p class="lede">
-            Leave a small public note for someone you may never meet. Every note
-            waits quietly for approval before it can be found by strangers.
-          </p>
-        </div>
+      <header class="site-header">
+        <h1>things that keep me sane</h1>
+        <p>
+          credits to a tumblr post called A Checklist Of Possible Reasons I Am
+          Upset, To Review When I Can't Seem To Figure It Out
+        </p>
+      </header>
 
-        <div class="illustration" aria-hidden="true">
-          <div class="paper paper-one">dear void,</div>
-          <div class="paper paper-two">still here</div>
-          <div class="paper paper-three">take care</div>
-          <span class="pin pin-one"></span>
-          <span class="pin pin-two"></span>
+      <section class="checklist-section" aria-labelledby="checklist-title">
+        <h2 id="checklist-title">checklist</h2>
+        <ul class="checklist">
+          <li><label for="check-eat"><input id="check-eat" type="checkbox"> did not eat</label></li>
+          <li><label for="check-hyperfixation"><input id="check-hyperfixation" type="checkbox"> new hyperfixation(s) and no time for it</label></li>
+          <li><label for="check-creative"><input id="check-creative" type="checkbox"> have not done a creative in 24 hours</label></li>
+          <li><label for="check-sounds"><input id="check-sounds" type="checkbox"> bad sounds</label></li>
+          <li><label for="check-clothes"><input id="check-clothes" type="checkbox"> clothes are touching my body</label></li>
+          <li><label for="check-cold"><input id="check-cold" type="checkbox"> cold</label></li>
+          <li><label for="check-people"><input id="check-people" type="checkbox"> people</label></li>
+          <li><label for="check-comment"><input id="check-comment" type="checkbox"> comment is stuck in my brain like a popcorn kernel</label></li>
+          <li><label for="check-water"><input id="check-water" type="checkbox"> last time i drank water was ?????</label></li>
+          <li><label for="check-nervous"><input id="check-nervous" type="checkbox"> nervous nervous nervous nervous</label></li>
+        </ul>
+        <p id="care-message" class="care-message" aria-live="polite" hidden></p>
+      </section>
+
+      <section class="postcard-section" aria-labelledby="postcard-title">
+        <h2 id="postcard-title">postcard wall</h2>
+        <div class="postcard" id="postcard">
+          <div class="postcard-stamp" aria-hidden="true"></div>
+
+          <div id="write-mode" class="postcard-mode">
+            <label for="note-input">leave a note</label>
+            <textarea
+              id="note-input"
+              maxlength="500"
+              rows="7"
+              placeholder="..."
+            ></textarea>
+            <div class="postcard-actions">
+              <span id="char-counter" class="counter">0/500</span>
+              <button id="save-button" type="button" disabled>save</button>
+              <button id="view-note-button" type="button">view older note</button>
+            </div>
+          </div>
+
+          <div id="read-mode" class="postcard-mode hidden">
+            <p id="older-note" class="older-note">No approved notes yet.</p>
+            <button id="write-note-button" type="button">write a new note</button>
+          </div>
         </div>
       </section>
 
-      <section class="workspace" aria-label="Submit and discover notes">
-        <form class="note-form" id="note-form" novalidate>
-          <div class="form-heading">
-            <label for="note-input">Write a note</label>
-            <span id="char-counter" class="counter">0/500</span>
-          </div>
-          <textarea
-            id="note-input"
-            name="note"
-            maxlength="500"
-            rows="8"
-            placeholder="Something small, true, strange, or kind..."
-            aria-describedby="form-status validation-hint"
-          ></textarea>
-          <p id="validation-hint" class="hint">
-            No links, emails, phone numbers, or names you would regret posting.
-          </p>
-          <div class="actions">
-            <button id="submit-button" type="submit">Submit note</button>
-            <button id="random-button" type="button" class="secondary">
-              Show random note
-            </button>
-          </div>
-          <p id="form-status" class="status" role="status" aria-live="polite"></p>
-        </form>
+      <section class="roads-section" aria-labelledby="roads-title">
+        <h2 id="roads-title">roads to take</h2>
+        <div class="roads-grid">
+          <a class="road-card" href="https://jspaint.app/">
+            <svg viewBox="0 0 220 150" role="img" aria-label="A road leading to one house">
+              <path class="sky" d="M0 0h220v150H0z"></path>
+              <path class="road" d="M94 150 112 92l18 58z"></path>
+              <path class="hill" d="M0 112c33-18 67-18 100 0s73 18 120-6v44H0z"></path>
+              <path class="house" d="M90 72h48v40H90z"></path>
+              <path class="roof" d="m84 74 30-27 30 27z"></path>
+              <path class="door" d="M109 91h12v21h-12z"></path>
+            </svg>
+            <span>Paint</span>
+          </a>
 
-        <aside class="random-panel" aria-labelledby="random-title">
-          <div class="panel-header">
-            <p class="kicker">Approved from the wall</p>
-            <h2 id="random-title">A note appears here</h2>
+          <a class="road-card" href="https://wigglypaint.com/">
+            <svg viewBox="0 0 220 150" role="img" aria-label="A road leading to one house">
+              <path class="sky" d="M0 0h220v150H0z"></path>
+              <path class="road wobbly-road" d="M86 150c8-25 16-39 21-60 7 21 17 36 27 60z"></path>
+              <path class="hill" d="M0 111c42-14 75-12 102 2s62 16 118-8v45H0z"></path>
+              <path class="house" d="M91 71h47v41H91z"></path>
+              <path class="roof" d="m83 75 31-28 32 28z"></path>
+              <path class="window" d="M122 86h10v10h-10z"></path>
+            </svg>
+            <span>Wobbly drawing</span>
+            <small>
+              WigglyPaint is a free online animated drawing tool where
+              hand-drawn lines wiggle automatically.
+            </small>
+          </a>
+
+          <div class="road-card double-road">
+            <svg viewBox="0 0 220 150" role="img" aria-label="A road leading to two houses">
+              <path class="sky" d="M0 0h220v150H0z"></path>
+              <path class="road" d="M92 150 110 95l18 55z"></path>
+              <path class="hill" d="M0 112c30-16 63-18 98-3 35 14 76 14 122-6v47H0z"></path>
+              <path class="house" d="M63 77h43v36H63z"></path>
+              <path class="roof" d="m57 79 28-25 28 25z"></path>
+              <path class="house house-two" d="M121 76h43v37h-43z"></path>
+              <path class="roof roof-two" d="m115 78 28-25 28 25z"></path>
+            </svg>
+            <div class="house-links">
+              <a href="https://twotone.io/">Twotone</a>
+              <a href="https://www.kaggle.com/datasets">Kaggle datasets</a>
+            </div>
           </div>
-          <blockquote id="random-note" class="random-note">
-            Press the random button and the wall will choose something that made
-            it through moderation.
-          </blockquote>
-        </aside>
+        </div>
       </section>
     </main>
   </body>
